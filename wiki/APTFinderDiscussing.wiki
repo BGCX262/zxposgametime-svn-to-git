@@ -1,0 +1,77 @@
+#summary Game time take i, what we have discussed about APTFinder
+#labels APTFinder,Usecase,logicflow
+
+= Introduction =
+since we set up zxposgametime, ATPFinder is our first project to discuss, even its just a module or subject and not big enough to called a project, but anyway call discuss it as a project.
+
+I have to say, we did not made any conclusion after first time discussion, but we were making progress whiling discussing. And of course, we still have some questions need correctly answer.
+
+Here are something we were discussed about.
+
+
+= Details =
+
+
+*Discussion Location*: Meeting room
+
+*Discussion time lasted*: 1 and half hour
+
+*Presence*: Zhoujian(Host), Chenjun, Taolee, Xiaopai
+
+
+== Content: ==
+
+  * Make sure every body have a same copy of Use-Case in his mind.
+    Use case is written in a previous doc named AptFinder.
+
+  * We find some Objects from the Use cases.
+
+    From Use case 1: Scan, APTFileInfo, APTFileIO, Location.
+
+    From Use case 2: Find, Result.
+
+  * About Use case 1, we discuss the relationship between the objects.
+
+   Here is the result.
+
+   a)	Scan depend upon Location.
+
+   b)	Scan depend upon APTFileIO.
+
+   c)	Scan aggregate of APTFileInfo.
+
+   Then we write the sequence diagram ~~logic flow(Im not sure is it could be called logic flow, or suppose to be called time sequence chart. anybody help me to fix it)~~ which is base on the relationship of objects we just got:
+
+   a)	Scan get file paths from Location.
+
+   b)	For every file Scan get APTFile infomation by APTFileIO.
+
+   c)	Scan create a APTFileInfo and set its value.
+
+   d)	... ...
+
+   we have not finished, coz we have different point of view about this flow and can not go on any longer.
+
+== Here are some opinions followed ==
+
+   a)	Location is too small to be an object(or class), it just a member of Scan, and is not suppose to be showed on the sequence diagram ~~logic flow~~.
+
+   b)	APTFileInfo is just a data, it has no operation, there should have a ojbect call APTFileInfoContainer.
+
+   c)	Even there is a APTFileInfoContainer, but it is data too.
+
+   d)	Weather the objects on the sequence diagram ~~logic flow~~ depends on the relation of objects, the dependence objects have to be on the sequence diagram ~~logic flow~~ but no aggregation.
+
+   e)	Everything on sequence diagram ~~logic flow~~ must be a class.
+
+   f)	Everything on sequence diagram ~~logic flow~~ just be an object, there is no class, no method, no event yet.
+
+   g)	... ...
+
+   There are too many opinions that I can not put them in my mind all. 
+
+
+As I said before, we did not make any conclusion, but we left a lot of questions, valuable questions.
+
+
+May be we will working on there questions next time.

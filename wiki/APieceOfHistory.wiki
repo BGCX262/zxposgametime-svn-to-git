@@ -1,0 +1,125 @@
+#summary How to make unit test effectively.
+#labels UnitTest,TDD,Refactoring
+
+=Writing before started=
+
+I am gonna write all the documents in English, and with out Chinese. coz you guys gonna never read any words of English if there is a Chinese version.
+
+= Key Words =
+
+*TDD*: Test Driven Develop, it is a kind of develop technique. Check it out by following link: http://en.wikipedia.org/wiki/Test-driven_development
+
+*CppUnit*: A kind of Unit test framework. Check it out by following link: http://cppunit.sourceforge.net/cppunit-wiki
+
+= Introduce =
+
+In this part, we are going to talk following questions:
+
+ # how to make our program easy to be tested by CppUnit?
+ # how to use CppUnit to test a program which is hard for test?
+
+
+what is the relationship between such questions and the title(APieceOfHistory), Here is the story:
+
+  At the beginning of the story, a bout more than one year ago. [http://code.google.com/u/jianzhou.cn/ jianzhou] made a decision: let CppUnit work in all the modules of his project in one year. But now we known the decision is failed. We do not know what did [http://code.google.com/u/jianzhou.cn/ jianzhou] done during the past year, we just know jianzhou left us two questions. That is how these questions come out.
+
+= Case =
+
+  We have a common module to test. this module is act as a Dll file, its job is about to get data from configuration file and data base.
+
+  We want this module will be controlled by TDD, which means every time we change this module is suppose to pass the previous test code. If so, we do not have to worry about affect previous functions any more.
+
+  In writing of test code, some blocks appear... ...
+
+  Interface of Dll:
+    # Read a configuration file to a list, and return this list.
+    # Get a query result data from data base, and return it.
+
+  Some Blocks:
+    # The data return from Dll is a list, it may contains lots of data, how could we validate the list? check out one by one?
+    # For Interface 2 in Dll. We need to alter table structure and modify the content of table, then validate if the Interface return the correct result. how can we do it effectively.
+
+= Discussing =
+
+We set up a meeting to discuss this case.
+
+*Title:* How to Make Unit Test Effectively.
+
+*Location:* Meeting room
+
+*Time:* Evening on 6/17/2008
+
+*Lasted:* 2 hours
+
+*Presence:* [http://code.google.com/u/xiaopai/ xiaopai](host),  [http://code.google.com/u/jianzhou.cn/ jianzhou], [http://code.google.com/u/taolee.cn/ taolee], xiangqing.yu
+
+*Discussing Method:* [http://www.brainstorm.lv/ Brainstorm]
+
+== Step 1 ==
+
+Host make the case clear.
+
+== Step 2 ==
+
+Make a list of questions:
+
+ # The data return from interface is big, how to certify every data element?
+ # Which data gonna be a standard data to certify the data return from dll?
+ # Some data from XML file has been conversed by dll, some as convert string "int" to int 8, how to handle it?
+ # Some data need manual certify, how to avoid this kind of job?
+ # How to make out test code automatic run perfectly? (It is the same question as 4)
+ # Test of this dll is not suppose to define as a Unit Test, so what kind of test is belonged?
+
+== Step 3 ==
+
+In this part, we did following job:
+ # We try to find solutions of every question.
+ # We discuss every solution and find out its advantage and disadvantage.
+
+||Q NO.	||Solution	||Advantage	||Disadvantage||
+||1	||1. Cut off test data. Only add some necessary data from test case.	||Less data, faster	||May lost necessary data||
+||1	||2. Return one element of data when interface invoked.	||Simple	||Hard to change. The interface is depends on develop needs, not test needs.||
+||1	||3. Return part of data. (Not all data)	||Less data, faster	||Complicated||
+||1	||4. Flat interface. (Return simple data)	||Less data, faster	||Hard to make it.||
+||2	||5. Stand data is hard code in test code.	||Correctly	||Need lots code, have to change.||
+||2	||6. Test code write XML file and hard code the stand data.	||Changeable	||Complicated, may break the Unit Test rule.||
+||2	||7. Read the data from XML(or database) as stand data.	||Simple	||May have issues in reading data.||
+||3	||8. Order a Mapping data to test team	||Simple, correctly	||None||
+||4， 5	||9. All the data certify job can be done by program so far.	||We have to avoid manually, no negotiation.||None||
+||6	||10. It is suppose to be called function test.	||More correctly	||None||
+||6	||11. Set up a class which charge of invoke this Dll, and test team just have test this class.	||Can be defined as Unit Test	||More code||
+
+== Step 4 ==
+
+Pick up solutions.
+
+We pick up following solutions as our recommand solutions.
+
+Solution NO.: 1, 8, 9, 10, 11
+
+
+== Step 5 ==
+
+Discuss more.
+
+For some solutions, we have different kind of opinions, so we keep on discussing.
+
+1. Do we have to put all test data in one XML file or split into many files?
+
+   We do not have any conclusion so far. coz people still have differe kind of opinion.
+
+2. Do we have to hard code standard data for read data from XML as standard data?
+
+   Our conclusion is it depends. We are here to analysis both methods, and you choose your option.
+
+   Benefit of hard code: it is way correct.
+
+   Benefit of Reading data from XML: less code, but may have issues in reading data.
+
+   So, if you could guarantee that no issues in reading XML, we suggest you choose reading data from XML. Otherwise hard code it.
+
+= Finally =
+
+  Now we are happy to say that we known more about UnitTest.
+
+  But we still have some opinions to discuss, may be next time, may be soon...

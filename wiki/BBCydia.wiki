@@ -1,0 +1,19 @@
+#labels Gametimetakev,Cydialikeblackberryapphome
+#Cydia like blackberry app home
+
+= Introduction =
+
+Rise a new project that makes money.
+
+
+= Details =
+
+A app like blackberry app world that looks like cydia for iphone
+  * Provide OTA service, for free download app for blackberry
+  * GUI
+  * App category
+  * Usr regist with email
+  * Usr rating the app
+  * Advs
+  * Usr contrubitions support
+  * Updating automaticly and quietly

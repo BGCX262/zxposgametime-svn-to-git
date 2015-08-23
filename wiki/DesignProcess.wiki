@@ -1,0 +1,44 @@
+#summary 描述面向对象设计的一般过程
+#labels Phase-Design
+
+= 在设计之前 =
+
+在设计之前，软件研发人员需要对待实现的系统有一个统一的认识，这个认识一般是从Use Case里面得来的。Use Case描述了待实现的系统如何与用户进行交互。通过Use Case，我们可以知道待实现的系统需要实现哪些功能，并且是如何与用户交互的。Use Case是需求文档的一部分。学习撰写Use Case可以阅读“编写有效用例”这本书。
+
+从Use Case出发，我们通过建立Domain Model来帮助分析问题，Domain Model是一个UML静态图，它描述待实现的系统由哪几部分组成，各个部分是如何交互的。建立Domain Model可以分三步走，
+
+ * 识别Conceptual Class
+ * 建立Conceptual Class之间的关系
+ * 给Conceptual Class增加属性
+
+其中Conceptual Class是物理世界中对象的抽象，与编程语言里面的Class（暂且称为Design Class）有所相同，有所不同。不同的地方在于Conceptual Class不考虑如何编程实现，只为了分析方便，而且一般不要把物理世界里面没有的东西用Conceptual Class抽象。
+
+我们可以利用名词法和查表法（AUAP P132）识别出Conceptual Class，然后利用常识或者查表法（AUAP P154）来确定不同Conceptual Class之前的联系。为Conceptual Class增加属性貌似没有什么好的方法，主要依靠常识。属性一般来讲是基本数据类型，如果不是基本数据类型或者有操作（method），则应该提出来成为一个Conceptual Class。关于给Conceptual Class增加属性应该注意的问题，请参考AUAP Chapter12
+
+= 设计过程 =
+
+有了Use Case和Domain Model，就可以进入设计过程了。设计过程的目标是识别出Design Class（包括名字，method和Attribute），以及为了实现一个功能，Design Class之间的调用关系。这个过程的输出是一个Design Class的静态类图以及为了完成一个Use Case所需要的时序图/协作图。
+
+一般来讲设计以Use Case为单位，一次设计完成一个Use Case描述的功能。
+
+首先从Use Case里面识别出用户发送给系统的system event，比如“用户在ATM机上选择取款”这样一句话可以认为是发给系统的一个system event，起个名字就是withdraw(),首先面对的问题是谁来负责相应这个system event，AUAP里面建议使用*Controller模式*(AUAP P237)来思考这个问题，并且同时考虑“*高内聚*”和“*低耦合*”这两个原则。我理解有两个方法找到这个Controller(或者说Handler)，一个是在Domain model里面揪出来一个看起来游手好闲没有什么事情的Conceptual Class，对应着生成一个同名的Design Class，让他来做facade，全权处理一个Use Case里面所有system event；另一种方法是新建一个名为<UseCase>Handler的Design Class，用来处理系统消息。
+
+Controller做的勾当无非就是“委托”，他自己是不劳动的，那么谁劳动呢？AUAP建议利用*Information Expert*(AUAP P221)来分派工作，核心思想是谁拥有干活需要的知识，谁就去完成这个工作。这个策略也是很符合常识和一般的习惯的。如果在Conceptual Class里面有合适的类，就直接把Conceptual Class映射成Design Class，如果没有，则新造一个Design Class。
+
+还有一个问题需要考虑，在OOD里面，对象是需要有另外的对象来创建的（当然在C++里面，这些对象的始祖都是main函数），由谁来负责对象的创建呢？AUAP推荐用*Creator模式*来思考这个问题，书中列举了几种情况，如果AB两个类，符合这几种情况，B就应该创建A。最简单的例子，如果B拥有A的实例，则B应该负责A的创建（不过显然工厂模式是违反了这个模式的，所以说模式也不是一定要遵守的）。
+
+在运用上述几个模式的过程当中，应该把*高内聚*和*低耦合*牢记在心，运用这两个原则可以帮助权衡设计方案。
+
+从上面的叙述可以看出，Use Case和Conceptual Class都是为了Design Model做服务的，Use Case提示系统需要完成什么功能，Conceptual Class为Design Class提供灵感和素材。
+
+一个Use Case的功能都实现了以后，最后再考虑初始化过程，所谓初始化过程就是从虚空之中建立第一个（或者是前n个对象的过程），在C++中，通常是在main()里面进行这个工作的，在Java里面，需要委派一个类来负责这个事情。
+
+= 零碎需要讨论的 =
+
+在设计的过程中，静态类图和序列图/协作图的撰写是并行进行的，并不存在先完成哪个再开始另外的图的这样的说法。
+
+上面的设计过程，都没有考虑UI的问题，实际上UI的问题是被刻意回避了的，或者说，为了UI和实现的分离，完全不考虑UI方面的事情，用这个方法来强制UI通过system event来调用系统功能。
+
+= 参考文档 =
+
+AUAP - Applying UML And Patterns

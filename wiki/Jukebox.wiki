@@ -1,0 +1,108 @@
+#summary Game time take iv, a toy one but a real one.
+
+= Introduction =
+
+Jukebox，既点唱机，实际上是一个网站，他的作用是方便部门内的同事点播工间操后面的歌曲。这更多的是一个教学项目，而不是一个实用的项目。他的目的是帮助团队成员熟悉从分析到设计到实现这一套流程，实践分层次思考问题，解决问题的方法。通过完成这个网站，也可以帮助团队成员熟悉web开发。
+
+按照部门的习惯，每天上午10点和下午4点会在办公室播放广播体操和眼保健操（就像高中时一样），在眼保健操和广播体操之后，是一段英语听力，然后是一首歌曲。播放音乐的音箱连接在一个同事的计算机上面，这个同事负责到时间打开foobar2000，开始播放音乐，我们姑且称他为“音乐管理员”。每天的歌曲也是他负责收集的，就是说，播放什么歌曲由他决定。当然有的时候有同事会点播歌曲，把他们自己喜爱的歌曲email给“音乐管理员”，由音乐管理员负责播放。
+
+因为前后两任音乐管理员都是程序员，所以定时播放音乐是用“计划任务”实现的，foobar的播放列表（包含了播放什么歌曲的信息）是如何建立的我还不知道，也许是手工生成的。
+
+音乐管理员也建立了一个ftp来放置每天播放的歌曲，如果大家觉得哪个歌曲好听，可以自己到ftp上面下载，如果有什么好歌曲推荐，超过email附件大小的，也可以直接上传到ftp服务器上面。但是在实际应用当中，用email传送歌曲（或者直接上传到ftp服务器）并且告诉音乐管理员播放还是有点麻烦的，这样做也有一个弊端就是，自己手头没有mp3文件，只想点播音乐管理员已经有的歌曲，是无法实现的。
+
+所以我们想实现一个音乐点唱机这样一个网站，同事登录以后，可以浏览已经存在的音乐列表，对感兴趣的歌曲进行点播。也可以把自己喜欢的音乐上传到点唱机，然后安排播出。
+
+
+= Use Case =
+
+小王下载到了一首好歌，想要上传到jukebox里面，然后再预约点播出来。他登录了点歌的网址，上面显示出了当天点歌的情况。小王选择歌曲上传，上传了那个他很喜欢的mp3文件。小王看到今天还没有人点播歌曲，他便开始向播放列表里面添加歌曲。他先选择播放列表里面上午10点的时间段，然后浏览歌曲列表，找到了刚刚上传的那首歌曲，把这个歌曲添加到10点时间段。到了10点钟，彭国平的计算机就会自动下载播放列表，按照这个列表进行播放。
+
+彭国平是播放管理员，他拥有播放列表的最终控制权，比如每天的眼保健操，英语听力和广播体操是不允许普通用户更改的，但是播放管理员可以修改。管理员可以更改普通用户点播的歌曲，但是普通用户就不可以了。
+
+== Use Case One ==
+点播歌曲
+
+ * *操作者*：Jukebox的普通用户，简称用户
+ * *范围*：Jukebox
+ * *前置条件*：Jukebox中起码有一首待点播的歌曲，有一个可以添加歌曲的播放列表
+ * *最小保证*：如果录入不成功，需要提示用户录入不成功，并做日志。原播放列表不得被破坏。
+ * *成功保证*：歌曲成功添加入播放列表
+ * *主成功场景*：
+  # 用户在浏览器中键入Jukebox的URL地址，浏览当天的播放列表。
+  # 用户试图编辑播放列表（比如点击add按钮）。
+  # （如果用户不是登录状态）Jukebox提示用户登录。
+  # 用户登录
+  # Jukebox回到播放列表编辑页面，此时用户已经是登录状态，用户再次点击add按钮。
+  # Jukebox显示歌曲列表
+  # 用户在歌曲列表中选择一首歌曲，将其加入到播放列表中
+  # 歌曲列表消失
+  # 用户重复从第一步开始的操作，但编辑的是其他日期的播放列表。
+
+ * *扩展场景*：
+    n/a
+
+ * *补充说明*：
+  用户可以编辑一周之内的播放列表。用户不可以浏览之前的播放列表，用户也不可以给周末添加播放列表。歌曲列表应该包括歌曲名称，演唱者/作曲者，专辑名称，播放时常这样几个要素。
+
+== Use Case Two ==
+上传歌曲
+
+Jukebox应该有解析mp3 meta信息的功能，如果在meta里面读不到歌曲名，就用文件名代替
+
+== Use Case Three ==
+管理员下载播放列表
+
+通过一个专门的url来下载foobar能够使用的播放列表，播放列表里面会包含真正的mp3的位置信息。
+
+== Use Case Four ==
+管理员初始化/修改播放列表
+
+初始化包含两方面的含义，一方面是眼保健操和体操是每天都要播放的，管理员只要设定一次就应该可以了。另外，管理员也应该可以设定（或者程序自己计算）哪天是节假日，不应该有播放列表存在。
+
+
+= 几点技术决策 = 
+
+采用BS架构，Server端采用GAE(Google Application Engine)，相应的编程语言为Python。开发用IDE为Ecllipse + PyDev。
+
+必须考虑到一个问题，即GAE不支持文件上传，被点的歌曲早早晚晚也要存放在本地计算机上面，以方便播放。这样就存在一个本地（播放音乐的计算机）数据与Server同步数据的问题。可能需要JavaScript一类的技术，或者专门的客户端负责更新数据。
+
+*另外有一个锦上添花的功能，就是从豆瓣的api导入歌曲的相关资料。*
+
+
+
+============== The following is English version =================
+
+= What kind of Jukebox it is? =
+
+It is a website which contains features like browse albums, download songs, and book 
+song in our team broadcast. All this website have to do is let our team member book 
+song conveniently. So we named it Jukebox.
+
+
+
+= Why we need this Jukebox? =
+
+In our office, we have to broadcast gym audio, English listening, and music in the 
+morning and afternoon everyday. The gym audio is fixed, and English listening file is 
+updated by English listening manager everyday, and the music file is updated by 
+broadcast manager every time before broadcast.
+
+Now, we have some troubles, every time the broadcast manager choosing music file it is 
+hard for him to choose a song interests everybody. After song is chosen, the broadcast 
+have to update music file or edit play list, it is kinda wasting time. And if any other 
+members wanna share a music, he must send over this file to broadcast manager, but it 
+appears no body like to send the file to broadcast manager.
+
+So, we wanna have a Jukebox, it could help every member easy to upload music file, 
+browse the music files, and book a song online.
+
+
+= Requirements =
+
+ # Is is a website.
+ # It can list all the music files information that broadcast have.
+ # It can help us upload music files.
+ # We can book a song online.
+
+
+= Use Case =

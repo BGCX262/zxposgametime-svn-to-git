@@ -1,0 +1,62 @@
+#summary Game time take ii, Domain Model for MyLibrary.
+#labels Phase-Design
+
+= 领域模型 =
+领域建模是沟通Design Model和用例之间的桥梁，他帮助研发人员充分理解问题域，即在现实世界中系统（如果有的话）是如何运转的。如果问题域不在现实世界，而是在计算机世界，领域模型如何搞，就不知道鸟～～。
+
+== 识别概念类(conceptual class) ==
+通过阅读用例，我们识别出了一些概念类；通过想象，我们增加了一些概念类。想象出来的概念类有一点不靠谱，接近于编程实现需要的类，而不是领域模型的类。所以，能拿掉的，我们就拿掉了。
+
+我们识别出来的概念类如下表所示：
+
+表 1
+||Book||代表物理上的一本书||
+||Book Description||书籍的描述||
+||Book Container||我们想象出来的概念模型||
+||Compare Rule||搜索条件||
+||Search||按搜索条件搜索书籍||
+||Search Result||搜索结果，可能不需要的一个类||
+||Register||向MyLibrary中加入一本书的动作（更改信息也靠他了）||
+||Rent||借书给别人的事件||
+||Statistic||统计购书情况||
+||Statistic Result||统计结果，可能不需要的一个类||
+
+== 建立概念类(conceptual class)之间的关联 ==
+概念类之间的联系见下图
+
+图1
+
+http://lh6.ggpht.com/jianzhou.cn/SD5xLKX_w0I/AAAAAAAAAvE/zr7KjRAkG9c/s800/Class%20Diagram%20-%20Main.jpg
+
+另外，更改书籍的属性需要Register操作，Register需要借助Search的帮助，但是这在图中没有体现出来。
+
+=== Sequence Diagram - Register Book ===
+Register为新书登记的动作，下图演示了相关对象之间的交互
+
+图2
+
+http://lh4.ggpht.com/jianzhou.cn/SD5xMqX_w1I/AAAAAAAAAvM/g3iwbuZ4kJY/s800/Sequence%20Diagram%20-%20Register%20Book.jpg
+
+=== Sequence Diagram - Rent Book ===
+Rent Book为书籍外借的动作，下图演示了相关对象之间的交互
+
+图3
+
+http://lh6.ggpht.com/jianzhou.cn/SD5xRKX_w3I/AAAAAAAAAvc/J-mYkLUmHRY/s800/Sequence%20Diagram%20-%20Rent%20Book.jpg
+
+=== Sequence Diagram - Search Book ===
+Search Book为书籍搜索的动作，Search为多种业务所需要。下图演示了相关对象之间的交互
+
+图4
+
+http://lh4.ggpht.com/jianzhou.cn/SD5xQqX_w2I/AAAAAAAAAvU/QnDarDOp5Vw/s800/Sequence%20Diagram%20-%20Search%20Book.jpg
+
+== 给概念类加入属性 ==
+概念类的属性应该是简单类型，比如String，Integer，Bool，时间之类的。如果不是简单类型，可以单独提出来成为一个简单类型。
+
+各个概念类的属性情况请见下表：
+
+表2
+||Book||ID、DiscountRate、Date||
+||Book Description||Name、Author、Publisher、Price||
+||Rent||Borrower、OutDate、ReturnDate||
